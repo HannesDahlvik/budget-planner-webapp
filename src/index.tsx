@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import config from './config'
 
 // App
 import App from './App'
@@ -8,8 +9,13 @@ import App from './App'
 import { store } from './redux/store'
 import { Provider } from 'react-redux'
 
+// Firebase
+import { FirebaseAppProvider } from 'reactfire'
+
 ReactDOM.render((
-    <Provider store={store}>
-        <App />
-    </Provider>
+    <FirebaseAppProvider firebaseConfig={config.firebaseConfig}>
+        <Provider store={store}>
+            <App />
+        </Provider>
+    </FirebaseAppProvider>
 ), document.getElementById('root'))

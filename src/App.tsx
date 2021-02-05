@@ -1,7 +1,11 @@
 import React from 'react'
 
+// Firebase
+import 'firebase/analytics'
+import { useAnalytics } from 'reactfire';
+
 const App = () => {
-    console.log(process.env);
+    useAnalytics()
 
     return (
         <div>
