@@ -1,0 +1,16 @@
+.other-auth-wrapper {
+    .other-auth-divider {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .other-auth-divider-element {
+            width: 45% !important;
+        }
+    }
+
+    .other-auth {
+        display: flex;
+        justify-content: space-evenly;
+    }
+}

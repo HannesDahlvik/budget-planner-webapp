@@ -1,0 +1,30 @@
+.dashboard-calendar {
+    height: 100%;
+}
+
+body.chakra-ui-dark {
+    .dashboard-calendar button {
+        background-color: transparent;
+
+        &:focus {
+            background-color: #12161d;
+            color: #fff;
+        }
+
+        &:hover {
+            color: #fff;
+        }
+
+        &.rbc-active {
+            background-color: #12161d;
+        }
+    }
+
+    .rbc-today {
+        background-color: #262f43;
+    }
+
+    .rbc-off-range-bg {
+        background-color: #12161d;
+    }
+}
