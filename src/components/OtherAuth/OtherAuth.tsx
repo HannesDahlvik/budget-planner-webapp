@@ -1,11 +1,11 @@
 import React from 'react'
 import './OtherAuth.scss'
 
+// Router
+import { useNavigate } from '@reach/router'
+
 // Icons
 import { FaGoogle } from 'react-icons/fa'
-
-// Router
-import { useHistory } from 'react-router-dom'
 
 // Chakra UI
 import { Button, Divider } from '@chakra-ui/react'
@@ -18,13 +18,13 @@ import firebase from 'firebase'
 import ErrorHandler from '../../utils/ErrorHandler'
 
 function OtherAuth() {
+    const navigate = useNavigate()
     const auth = useAuth()
-    const history = useHistory()
 
     async function doLoginWithGoogle() {
         const provider = new firebase.auth.GoogleAuthProvider()
         auth.signInWithPopup(provider)
-            .then(() => history.push('/dashboard'))
+            .then(() => navigate('/dashboard'))
             .catch((err) => new ErrorHandler(err.message))
     }
 

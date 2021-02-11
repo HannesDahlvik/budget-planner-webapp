@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Router
-import { useHistory } from 'react-router-dom'
+
 
 // Firebase
 import { useAuth } from 'reactfire'
@@ -9,10 +9,11 @@ import { useAuth } from 'reactfire'
 // Chakra UI
 import { Alert, AlertDescription, AlertIcon, Box, Button, Flex, FormControl, FormLabel, Grid, GridItem, Heading, Input, InputGroup, InputRightElement, Link, Spinner, Text } from '@chakra-ui/react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
+import { useNavigate } from '@reach/router'
 
-const Signup = () => {
+const Signup = (props: any) => {
     const auth = useAuth()
-    const history = useHistory()
+    const navigate = useNavigate()
     const [username, setUsername] = React.useState('')
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
@@ -32,7 +33,7 @@ const Signup = () => {
                         displayName: username
                     })
                     setIsLoading(false);
-                    history.push('/dashboard')
+                    navigate('/dashboard')
                 })
         } catch (error) {
             setError('Invalid username or password');
@@ -62,7 +63,7 @@ const Signup = () => {
                             variant="outline"
                             width="full"
                             mt={4}
-                            onClick={() => history.push('/dashboard')}
+                            onClick={() => navigate('/dashboard')}
                         >
                             Dashboard
                         </Button>

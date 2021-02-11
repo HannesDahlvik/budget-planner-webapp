@@ -17,12 +17,13 @@ import checkNumber from '../../../utils/checkNumber'
 import CurrencyFormatter from '../../../utils/CurrencyFormatter'
 import getPaymentsAndSubscriptionsData from '../../../utils/getPaymentsAndSubscriptionsData'
 import { format } from 'date-fns'
+import EditDataModal from '../../../components/Dashboard/EditDataModal/EditDataModal'
 
 
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-const List = () => {
+const List = (props: any) => {
     const [allData, setAllData] = React.useState<any>()
 
     const [paymentsData, setPaymentsData] = React.useState<any>(null)
@@ -40,6 +41,10 @@ const List = () => {
             if (store.getState().productChange.value) {
                 getData()
                 store.dispatch({ type: 'productChange', newState: false })
+            }
+
+            if (!store.getState().editDataModal.value) {
+                getData()
             }
         })
     }, [])
@@ -145,10 +150,10 @@ const List = () => {
                     >Subscriptions</Tab>
                 </TabList>
                 <TabPanels>
-                    <TabPanel>
+                    <TabPanel padding={0}>
                         <PaymentsList data={paymentsData} />
                     </TabPanel>
-                    <TabPanel>
+                    <TabPanel padding={0}>
                         <SubscriptionsList data={subscriptionsData} />
                     </TabPanel>
                 </TabPanels>
@@ -163,21 +168,41 @@ const PaymentsList = (props: any) => {
     const auth = useAuth()
     const firestore = useFirestore()
 
+    const [showEditDataModal, setShowEditDataModal] = React.useState(false)
+    const [editDataModalData, setEditDataModalData] = React.useState<any>()
+
+    React.useEffect(() => {
+        store.subscribe(() => {
+            setShowEditDataModal(store.getState().editDataModal.value)
+        })
+    }, [])
+
     const removeFromList = async (id: any, type: any) => {
         await firestore.collection('financial_data').doc(auth.currentUser?.uid).collection(type).doc(id).delete()
             .then(() => {
-                toast.success('Document successfully deleted!')
+                toast.success('Payment successfully deleted!')
                 store.dispatch({ type: 'productChange', newState: true })
             })
             .catch((err: Error) => new ErrorHandler(err.message))
+    }
+
+    const editData = (data: any) => {
+        setEditDataModalData(data)
+        store.dispatch({ type: 'setOpenEditDataModal', newVal: true })
+        setShowEditDataModal(true)
     }
 
     if (props.data) {
         if (props.data.length > 0) {
             return (
                 <>
+                    {showEditDataModal ? (
+                        <EditDataModal data={editDataModalData} isOpen={showEditDataModal} />
+                    ) : <></>}
+
                     <Table
                         variant="simple"
+                        size="sm"
                     >
                         <Thead>
                             <Tr>
@@ -191,7 +216,12 @@ const PaymentsList = (props: any) => {
                         <Tbody>
                             {props.data.map((row: any, i: number) => (
                                 <Tr key={i}>
-                                    <Td pl={30}><EditIcon /></Td>
+                                    <Td
+                                        onClick={() => editData(row)}
+                                        pl={30}
+                                    >
+                                        <EditIcon style={{ cursor: 'pointer' }} />
+                                    </Td>
                                     <Td>{row.title}</Td>
                                     <Td>{format(new Date(row.date), 'dd/MM/yyyy')}</Td>
                                     <Td>{CurrencyFormatter(row.amount)}</Td>
@@ -218,12 +248,44 @@ const PaymentsList = (props: any) => {
 }
 
 const SubscriptionsList = (props: any) => {
+    const auth = useAuth()
+    const firestore = useFirestore()
+
+    const [showEditDataModal, setShowEditDataModal] = React.useState(false)
+    const [editDataModalData, setEditDataModalData] = React.useState<any>()
+
+    React.useEffect(() => {
+        store.subscribe(() => {
+            setShowEditDataModal(store.getState().editDataModal.value)
+        })
+    }, [])
+
+    const removeFromList = async (id: any, type: any) => {
+        await firestore.collection('financial_data').doc(auth.currentUser?.uid).collection(type).doc(id).delete()
+            .then(() => {
+                toast.success('Payment successfully deleted!')
+                store.dispatch({ type: 'productChange', newState: true })
+            })
+            .catch((err: Error) => new ErrorHandler(err.message))
+    }
+
+    const editData = (data: any) => {
+        setEditDataModalData(data)
+        store.dispatch({ type: 'setOpenEditDataModal', newVal: true })
+        setShowEditDataModal(true)
+    }
+
     if (props.data) {
         if (props.data.length > 0) {
             return (
                 <>
+                    {showEditDataModal ? (
+                        <EditDataModal data={editDataModalData} isOpen={showEditDataModal} />
+                    ) : <></>}
+
                     <Table
                         variant="simple"
+                        size="sm"
                     >
                         <Thead>
                             <Tr>
@@ -237,11 +299,21 @@ const SubscriptionsList = (props: any) => {
                         <Tbody>
                             {props.data.map((row: any, i: number) => (
                                 <Tr key={i}>
-                                    <Td pl={30}><EditIcon /></Td>
+                                    <Td
+                                        onClick={() => editData(row)}
+                                        pl={30}
+                                    >
+                                        <EditIcon style={{ cursor: 'pointer' }} />
+                                    </Td>
                                     <Td>{row.title}</Td>
                                     <Td>{row.recurrences}</Td>
                                     <Td>{CurrencyFormatter(row.amount)}</Td>
-                                    <Td pl={30}><CloseButton /></Td>
+                                    <Td
+                                        onClick={() => removeFromList(row.id, row.type)}
+                                        pl={30}
+                                    >
+                                        <CloseButton />
+                                    </Td>
                                 </Tr>
                             ))}
                         </Tbody>

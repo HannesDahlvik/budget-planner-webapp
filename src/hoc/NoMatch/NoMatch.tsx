@@ -2,21 +2,30 @@ import React from 'react'
 import './NoMatch.scss'
 
 // Router
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from '@reach/router'
 
 // Chakra UI
-import { Button, Divider } from '@chakra-ui/react'
+import { Button, Code, Divider } from '@chakra-ui/react'
 
-function NoMatch() {
+interface Props {
+    default?: any
+    isDashboard?: boolean
+}
+
+function NoMatch(props: Props) {
     const location = useLocation()
 
     return (
-        <div className="no-match-wrapper">
+        <div className={`no-match-wrapper ${!props.isDashboard ? 'no-match-wrapper-public' : ''}`}>
             <div className="center">
                 <h1>404</h1>
-                <h3>No match for <code>{location.pathname}</code></h3>
+                <h3>No match for <Code style={{ fontSize: '100%', margin: '10px 0' }}>{location.pathname}</Code></h3>
                 <Divider mb={4} />
-                <Link to="/"><Button size="lg" as="button" colorScheme="blue">HOME</Button></Link>
+                {props.isDashboard ? (
+                    <Link to="/dashboard/frontpage"><Button size="lg" as="button" colorScheme="blue">DASHBOARD</Button></Link>
+                ) : (
+                        <Link to="/"><Button size="lg" as="button" colorScheme="blue">HOME</Button></Link>
+                    )}
             </div>
         </div>
     )

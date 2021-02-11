@@ -1,7 +1,7 @@
 import React from 'react'
+import './Public.scss'
 
 // Router
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import * as ROUTES from '../../constants/routes';
 
 // Components
@@ -10,16 +10,19 @@ import Footer from '../../components/Public/Footer/Footer';
 
 // Pages
 import Home from '../../pages/Home/Home';
+import Donate from '../../pages/Donate/Donate';
 
-const Public = () => {
+const Public = (props: any) => {
     return (
-        <>
-            <Navbar />
+        <div className="root">
+            <Navbar isSmall={true} />
 
-            <Home />
+            <div className="public-page wrapper">
+                {props.children}
+            </div>
 
             <Footer />
-        </>
+        </div>
     )
 }
 

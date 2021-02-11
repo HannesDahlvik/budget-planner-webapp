@@ -2,7 +2,7 @@ import React from 'react'
 import OtherAuth from '../../components/OtherAuth/OtherAuth'
 
 // Router
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from '@reach/router'
 
 // Firebase
 import { useAuth } from 'reactfire'
@@ -11,9 +11,9 @@ import { useAuth } from 'reactfire'
 import { Alert, AlertDescription, AlertIcon, Box, Button, Flex, FormControl, FormLabel, Grid, GridItem, Heading, Input, InputGroup, InputRightElement, Link, Spinner, Text } from '@chakra-ui/react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 
-const Login = () => {
+const Login = (props: any) => {
     const auth = useAuth()
-    const history = useHistory()
+    const navigate = useNavigate()
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
     const [error, setError] = React.useState('')
@@ -29,7 +29,7 @@ const Login = () => {
             await auth.signInWithEmailAndPassword(email, password)
                 .then(() => {
                     setIsLoading(false);
-                    history.push('/dashboard')
+                    navigate('/dashboard')
                 })
         } catch (error) {
             setError('Invalid username or password');
@@ -59,7 +59,7 @@ const Login = () => {
                             variant="outline"
                             width="full"
                             mt={4}
-                            onClick={() => history.push('/dashboard')}
+                            onClick={() => navigate('/dashboard')}
                         >
                             Dashboard
                         </Button>

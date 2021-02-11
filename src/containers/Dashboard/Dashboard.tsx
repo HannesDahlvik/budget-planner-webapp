@@ -3,7 +3,8 @@ import { useAuth, useDatabase } from 'reactfire'
 import './Dashboard.scss'
 
 // Router
-import { BrowserRouter, Link, NavLink, Redirect, Route, Switch } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from '@reach/router'
+import NavLink from '../../components/NavLink/NavLink'
 
 // Components
 import Loader from '../../components/Loader/Loader'
@@ -21,11 +22,14 @@ import { ChevronDownIcon } from '@chakra-ui/icons'
 import ErrorHandler from '../../utils/ErrorHandler'
 import * as ROUTES from '../../constants/routes'
 import List from '../../pages/Dashboard/List/List'
+import NoMatch from '../../hoc/NoMatch/NoMatch'
 
-const Dashboard = () => {
+const Dashboard = (props: any) => {
+    const location = useLocation()
+    const navigate = useNavigate()
     const database = useDatabase()
     const auth = useAuth()
-    const [links, setLinks] = React.useState([
+    const links = [
         {
             title: 'Frontpage',
             url: '/dashboard/frontpage',
@@ -54,12 +58,14 @@ const Dashboard = () => {
             url: '/dashboard/profile',
             active: false
         }
-    ])
+    ]
     const [settings, setSettings] = React.useState()
     const [readyToRender, setReadyToRender] = React.useState(false)
     const [displayName, setDisplayName] = React.useState<string | null | undefined>('')
 
     React.useEffect(() => {
+        if (location.pathname === '/dashboard') navigate('/dashboard/frontpage')
+
         database.ref(`${auth.currentUser?.uid}/settings`)
             .once('value', (res: firebase.default.database.DataSnapshot) => {
                 localStorage.setItem('settings', JSON.stringify(res.val()))
@@ -75,11 +81,10 @@ const Dashboard = () => {
     if (readyToRender) {
         return (
             <>
-                <Grid gridTemplateColumns="0.7fr 3fr" className="dashboard-wrapper">
-                    <BrowserRouter>
-                        <div className="sidebar">
-                            <div className="sidebar-top">
-                                {/* <Menu>
+                <Grid className="dashboard-wrapper">
+                    <div className="sidebar">
+                        <div className="sidebar-top">
+                            {/* <Menu>
                                     <MenuButton
                                         as={Button}
                                         fontSize="xl"
@@ -97,55 +102,47 @@ const Dashboard = () => {
                                         <MenuItem as="button" onClick={() => auth.signOut()}>Log out</MenuItem>
                                     </MenuList>
                                 </Menu> */}
-                                <Text
-                                    fontSize="24px"
-                                    fontWeight="700"
-                                >
-                                    <a href="/">
-                                        {auth.currentUser?.displayName}
-                                    </a>
-                                </Text>
-                            </div>
-                            <div className="sidebar-content">
-                                {links.map((row: any, i: number) => {
-                                    if (row.divider) {
-                                        return <Divider
-                                            my={4}
-                                            key={i}
-                                        />
-                                    } else {
-                                        return (
-                                            <NavLink
-                                                to={row.url}
-                                                activeClassName="active"
-                                                key={i}
-                                            >
-                                                {row.title}
-                                            </NavLink>
-                                        )
-                                    }
-                                })}
-                                <Link
-                                    to="/"
-                                    onClick={() => auth.signOut()}
-                                >
-                                    Logout
+                            <Text
+                                fontSize="24px"
+                                fontWeight="700"
+                            >
+                                <Link to="/">
+                                    {auth.currentUser?.displayName}
                                 </Link>
-                            </div>
-                            <div className="sidebar-bottom">
-                                <ThemeToggler />
-                            </div>
+                            </Text>
                         </div>
-                        <div className="dashboard">
-                            <Switch>
-                                <Route path={ROUTES.DASHBOARD} exact><Redirect to={`${ROUTES.DASHBOARD}/frontpage`} /></Route>
-                                <Route path={`${ROUTES.DASHBOARD}/frontpage`} component={Frontpage} exact />
-                                <Route path={`${ROUTES.DASHBOARD}/calendar`} component={Calendar} exact />
-                                <Route path={`${ROUTES.DASHBOARD}/list`} component={List} exact />
-                                <Route path={`${ROUTES.DASHBOARD}/profile`} component={Profile} exact />
-                            </Switch>
+                        <div className="sidebar-content">
+                            {links.map((row: any, i: number) => {
+                                if (row.divider) {
+                                    return <Divider
+                                        my={4}
+                                        key={i}
+                                    />
+                                } else {
+                                    return (
+                                        <NavLink
+                                            to={row.url}
+                                            key={i}
+                                        >
+                                            {row.title}
+                                        </NavLink>
+                                    )
+                                }
+                            })}
+                            <Link
+                                to="/"
+                                onClick={() => auth.signOut()}
+                            >
+                                Logout
+                            </Link>
                         </div>
-                    </BrowserRouter>
+                        <div className="sidebar-bottom">
+                            <ThemeToggler />
+                        </div>
+                    </div>
+                    <div className="dashboard">
+                        {props.children}
+                    </div>
                 </Grid>
             </>
         )

@@ -95,7 +95,7 @@ const DataModal = (props: Props) => {
                         <FormControl className="my1">
                             <FormLabel htmlFor="amount">Amount</FormLabel>
                             <NumberInput clampValueOnBlur={false}>
-                                <NumberInputField onChange={(e: any) => setAmount(e.target.value)} />
+                                <NumberInputField placeholder="123" onChange={(e: any) => setAmount(e.target.value)} />
                                 <NumberInputStepper>
                                     <NumberIncrementStepper />
                                     <NumberDecrementStepper />

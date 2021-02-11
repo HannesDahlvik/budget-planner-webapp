@@ -30,7 +30,7 @@ const localizer = dateFnsLocalizer({
     locales,
 })
 
-const CalendarPage = () => {
+const CalendarPage = (props: any) => {
     const [events, setEvents] = React.useState()
     const firestore = useFirestore()
     const auth = useAuth()

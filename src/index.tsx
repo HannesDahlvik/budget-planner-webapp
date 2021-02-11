@@ -17,24 +17,27 @@ import { Provider } from 'react-redux'
 
 // Toastify
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
 
 // CSS
+import 'react-toastify/dist/ReactToastify.css';
 import './css/style.scss'
 import './css/box-model.css'
+import { LocationProvider } from '@reach/router'
 
 console.clear()
 
 ReactDOM.render((
-    <ChakraProvider>
-        <FirebaseAppProvider firebaseConfig={config.firebaseConfig}>
-            <Provider store={store}>
-                <App />
-                <CSSReset />
-                <ToastContainer
-                    hideProgressBar={true}
-                />
-            </Provider>
-        </FirebaseAppProvider>
-    </ChakraProvider>
+    <LocationProvider>
+        <ChakraProvider>
+            <FirebaseAppProvider firebaseConfig={config.firebaseConfig}>
+                <Provider store={store}>
+                    <App />
+                    <CSSReset />
+                    <ToastContainer
+                        hideProgressBar={true}
+                    />
+                </Provider>
+            </FirebaseAppProvider>
+        </ChakraProvider>
+    </LocationProvider>
 ), document.getElementById('root'))

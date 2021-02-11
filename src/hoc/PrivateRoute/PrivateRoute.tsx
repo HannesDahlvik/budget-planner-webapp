@@ -1,30 +1,19 @@
 import React from 'react'
 
 // Router
-import { Redirect, Route } from 'react-router-dom'
+import { Redirect, useLocation } from '@reach/router'
 
 // Firebase
 import { useAuth } from 'reactfire'
 
-const PrivateRoute = ({ children, ...rest }: any) => {
+const PrivateRoute = (props: any) => {
+    const location = useLocation()
     const auth = useAuth()
+    let { as: Comp } = props;
 
-    return (
-        <Route
-            {...rest}
-            render={() =>
-                auth.currentUser ? (
-                    children
-                ) : (
-                        <Redirect
-                            to={{
-                                pathname: '/login'
-                            }}
-                        />
-                    )
-            }
-        />
-    )
+    return auth.currentUser
+        ? <Comp {...props} />
+        : <Redirect from={location.pathname} to="/login" noThrow />
 }
 
 export default PrivateRoute
