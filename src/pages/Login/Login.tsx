@@ -34,8 +34,6 @@ const Login = (props: any) => {
         } catch (error) {
             setError('Invalid username or password');
             setIsLoading(false);
-            setEmail('');
-            setPassword('');
         }
     }
 
@@ -75,6 +73,7 @@ const Login = (props: any) => {
                                     <FormControl isRequired>
                                         <FormLabel>Email</FormLabel>
                                         <Input
+                                            value={email}
                                             type="email"
                                             placeholder="test@test.com"
                                             size="lg"
@@ -85,6 +84,7 @@ const Login = (props: any) => {
                                         <FormLabel>Password</FormLabel>
                                         <InputGroup>
                                             <Input
+                                                value={password}
                                                 type={showPassword ? 'text' : 'password'}
                                                 placeholder="*******"
                                                 size="lg"

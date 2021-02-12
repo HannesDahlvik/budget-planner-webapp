@@ -3,16 +3,11 @@ import { useAuth, useDatabase } from 'reactfire'
 import './Dashboard.scss'
 
 // Router
-import { Link, useLocation, useNavigate } from '@reach/router'
+import { Link } from '@reach/router'
 import NavLink from '../../components/NavLink/NavLink'
 
 // Components
 import Loader from '../../components/Loader/Loader'
-
-// Pages
-import Frontpage from '../../pages/Dashboard/Frontpage/Frontpage'
-import Calendar from '../../pages/Dashboard/Calendar/Calendar'
-import Profile from '../../pages/Dashboard/Profile/Profile'
 
 // Chakra UI
 import { Button, Divider, Grid, Menu, MenuButton, MenuItem, MenuList, Text, useColorMode } from '@chakra-ui/react'
@@ -25,8 +20,6 @@ import List from '../../pages/Dashboard/List/List'
 import NoMatch from '../../hoc/NoMatch/NoMatch'
 
 const Dashboard = (props: any) => {
-    const location = useLocation()
-    const navigate = useNavigate()
     const database = useDatabase()
     const auth = useAuth()
     const links = [
@@ -64,8 +57,6 @@ const Dashboard = (props: any) => {
     const [displayName, setDisplayName] = React.useState<string | null | undefined>('')
 
     React.useEffect(() => {
-        if (location.pathname === '/dashboard') navigate('/dashboard/frontpage')
-
         database.ref(`${auth.currentUser?.uid}/settings`)
             .once('value', (res: firebase.default.database.DataSnapshot) => {
                 localStorage.setItem('settings', JSON.stringify(res.val()))

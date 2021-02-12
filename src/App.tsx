@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Routing
-import { Router, useNavigate } from "@reach/router"
+import { Redirect, Router } from "@reach/router"
 import PrivateRoute from './hoc/PrivateRoute/PrivateRoute'
 import * as ROUTES from './constants/routes';
 
@@ -14,10 +14,12 @@ import { useAnalytics, useAuth } from 'reactfire'
 import Public from './containers/Public/Public'
 import Dashboard from './containers/Dashboard/Dashboard'
 
-// Pages
+// Global Pages
 import Login from './pages/Login/Login';
 import Signup from './pages/Signup/Signup';
+import NoMatch from './hoc/NoMatch/NoMatch';
 
+// Public Pages
 import Home from './pages/Home/Home';
 import Donate from './pages/Donate/Donate';
 
@@ -29,7 +31,7 @@ import Profile from './pages/Dashboard/Profile/Profile';
 
 // Components
 import Loader from './components/Loader/Loader'
-import NoMatch from './hoc/NoMatch/NoMatch';
+import ForgotPassword from './components/Public/ForgotPassword/ForgotPassword';
 
 const App = () => {
     const auth = useAuth()
@@ -51,12 +53,13 @@ const App = () => {
                 <NoMatch default isDashboard={false} />
                 <Login path={ROUTES.LOG_IN} />
                 <Signup path={ROUTES.SIGN_UP} />
-                {/* <Route path={ROUTES.PASSWORD_FORGET} component={ForgotPassword} exact /> */}
+                <ForgotPassword path={ROUTES.PASSWORD_FORGET} />
                 <Public path={ROUTES.PUBLIC}>
                     <NoMatch default isDashboard={false} />
                     <Home path="/" />
                     <Donate path="/donate" />
                 </Public>
+                <Redirect from="/dashboard" to="/dashboard/frontpage" noThrow />
                 <PrivateRoute as={Dashboard} path="/dashboard">
                     <NoMatch default isDashboard={true} />
                     <Frontpage path="frontpage" />
