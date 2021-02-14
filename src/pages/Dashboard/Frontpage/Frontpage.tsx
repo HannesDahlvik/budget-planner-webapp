@@ -1,5 +1,8 @@
 import React from 'react'
-import { useAuth, useDatabase, useFirestore } from 'reactfire'
+import { useAuth, useDatabase } from 'reactfire'
+
+// Types
+import { FinancialData } from '../../../types'
 
 import { format } from 'date-fns'
 
@@ -20,10 +23,9 @@ import Loader from '../../../components/Loader/Loader'
 import store from '../../../redux/store'
 import getPaymentsAndSubscriptionsData from '../../../utils/getPaymentsAndSubscriptionsData'
 
-const Frontpage = (props: any) => {
+const Frontpage = React.memo((props: any) => {
     const database = useDatabase()
     const auth = useAuth()
-    const firestore = useFirestore()
 
     const [readyToRender, setReadyToRender] = React.useState(false)
 
@@ -90,18 +92,19 @@ const Frontpage = (props: any) => {
 
     const initChart = async () => {
         getPaymentsAndSubscriptionsData()
-            .then((res) => {
+            .then((res: FinancialData[]) => {
                 const moneyUsageArr: any = Array.from({ length: 12 }).fill(0)
                 const subscriptionsData: any = Array.from({ length: 12 }).fill(0)
                 const paymentsData: any = Array.from({ length: 12 }).fill(0)
 
-                res.map((row: any) => {
+                res.map((row: FinancialData) => {
                     if (row.type === 'subscriptions') {
                         if (row.year === selectedYear) {
                             let subscriptions: any = Array.from({ length: 12 }).fill(0)
-                            for (let i = 0; i < subscriptions.length; i++) {
-                                if (i % (12 / row.recurrences) === 0) subscriptions[i] = Number(Math.abs(row.amount))
-                            }
+                            if (row.recurrences)
+                                for (let i = 0; i < subscriptions.length; i++) {
+                                    if (i % (12 / row.recurrences) === 0) subscriptions[i] = Number(Math.abs(row.amount))
+                                }
 
                             for (let i = 0; i < 12; i++) {
                                 subscriptionsData[i] += parseFloat(String(Math.abs(subscriptions[i])))
@@ -121,7 +124,7 @@ const Frontpage = (props: any) => {
                 calculateCurrentMonthTotal(res, subscriptionsData)
                 calculateExpences(paymentsData, subscriptionsData)
 
-                moneyUsageArr.map((row: any, i: number) => {
+                moneyUsageArr.map((row: number, i: number) => {
                     moneyUsageArr[i] = parseFloat(row.toFixed(2))
                 })
 
@@ -171,13 +174,13 @@ const Frontpage = (props: any) => {
             .catch((err: Error) => new ErrorHandler(err.message))
     }
 
-    const calculateCurrentMonthTotal = (data: any, subscriptionsData: any[]) => {
-        let monthlyTotal = 0
-        data.map((row: any) => {
+    const calculateCurrentMonthTotal = (data: FinancialData[], subscriptionsData: number[]) => {
+        let monthlyTotal: number = 0
+        data.map((row: FinancialData) => {
             if (row.type === 'payments') {
-                let date = row.date.split('-')
+                let date: string[] | string = row.date.split('-')
                 date = `${date[1]}/${date[0]}`
-                const checkDate = `${checkNumber(new Date().getMonth() + 1)}/${selectedYear}`
+                const checkDate: string = `${checkNumber(new Date().getMonth() + 1)}/${selectedYear}`
                 if (date === checkDate) monthlyTotal += row.amount
             }
         })
@@ -185,10 +188,10 @@ const Frontpage = (props: any) => {
         setMonthlyTotal(Number(monthlyTotal.toFixed(2)))
     }
 
-    const calculateExpences = async (paymentsData: any[], subscriptionsData: any[]) => {
+    const calculateExpences = async (paymentsData: number[], subscriptionsData: number[]) => {
         let expences: number = 0
-        paymentsData.map((row: any) => expences += row)
-        subscriptionsData.map((row: any) => expences += row)
+        paymentsData.map((row: number) => expences += row)
+        subscriptionsData.map((row: number) => expences += row)
         setExpences(-Math.abs(Number(expences)))
     }
 
@@ -319,6 +322,6 @@ const Frontpage = (props: any) => {
     } else {
         return <Loader />
     }
-}
+})
 
 export default Frontpage

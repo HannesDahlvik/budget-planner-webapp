@@ -2,6 +2,9 @@ import React from 'react'
 import './Calendar.scss'
 import { useAuth, useFirestore } from 'reactfire'
 
+// Types
+import { CalendarData, FinancialData } from '../../../types'
+
 // CSS
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
@@ -30,17 +33,17 @@ const localizer = dateFnsLocalizer({
     locales,
 })
 
-const CalendarPage = (props: any) => {
-    const [events, setEvents] = React.useState()
+const CalendarPage = React.memo((props: any) => {
+    const [events, setEvents] = React.useState<CalendarData[]>()
     const firestore = useFirestore()
     const auth = useAuth()
 
     const getPaymentsAndSubscriptionsData = async () => {
-        const data: any = []
+        const data: FinancialData[] = []
         await firestore.collection('financial_data').doc(auth.currentUser?.uid).collection('payments').get()
             .then((res: firebase.default.firestore.QuerySnapshot) => {
                 res.forEach((doc: firebase.default.firestore.QueryDocumentSnapshot) => {
-                    let obj = doc.data()
+                    let obj: any = doc.data()
                     obj.id = doc.id
                     obj.type = 'payments'
                     data.push(obj)
@@ -50,7 +53,7 @@ const CalendarPage = (props: any) => {
         await firestore.collection('financial_data').doc(auth.currentUser?.uid).collection('subscriptions').get()
             .then((res: firebase.default.firestore.QuerySnapshot) => {
                 res.forEach((doc: firebase.default.firestore.QueryDocumentSnapshot) => {
-                    let obj = doc.data()
+                    let obj: any = doc.data()
                     obj.id = doc.id
                     obj.type = 'subscriptions'
                     data.push(obj)
@@ -62,8 +65,8 @@ const CalendarPage = (props: any) => {
 
     React.useEffect(() => {
         getPaymentsAndSubscriptionsData()
-            .then((data: any) => {
-                const calendarData: any = []
+            .then((data: FinancialData[]) => {
+                const calendarData: CalendarData[] = []
                 data.map((row: any) => {
                     if (row.type === 'subscriptions') {
                         let subscriptions = Array.from({ length: 12 }).fill(0)
@@ -72,9 +75,9 @@ const CalendarPage = (props: any) => {
                                 subscriptions[i] = Number(row.amount)
                             }
                         }
-                        subscriptions.map((amount: any, i: number) => {
+                        subscriptions.map((amount: number | any, i: number) => {
                             if (amount < 0) {
-                                const dataObj = {
+                                const dataObj: CalendarData = {
                                     title: `${row.title}, ${CurrencyFormatter(row.amount)}`,
                                     start: new Date(`${new Date().getFullYear()}-${checkNumber(i + 1)}-${1}`),
                                     end: new Date(`${new Date().getFullYear()}-${checkNumber(i + 1)}-${1}`)
@@ -85,11 +88,10 @@ const CalendarPage = (props: any) => {
                     }
 
                     if (row.type !== 'subscriptions') {
-                        const dataObj = {
+                        const dataObj: CalendarData = {
                             title: `${row.title}, ${CurrencyFormatter(row.amount)}`,
                             start: new Date(row.date),
-                            end: new Date(row.date),
-                            amount: CurrencyFormatter(row.amount)
+                            end: new Date(row.date)
                         }
                         calendarData.push(dataObj)
                     }
@@ -112,6 +114,6 @@ const CalendarPage = (props: any) => {
     } else {
         return <Loader />
     }
-}
+})
 
 export default CalendarPage

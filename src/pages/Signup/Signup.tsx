@@ -1,19 +1,20 @@
 import React from 'react'
 
 // Router
-
+import { useNavigate } from '@reach/router'
 
 // Firebase
-import { useAuth } from 'reactfire'
+import { useAuth, useDatabase } from 'reactfire'
 
 // Chakra UI
 import { Alert, AlertDescription, AlertIcon, Box, Button, Flex, FormControl, FormLabel, Grid, GridItem, Heading, Input, InputGroup, InputRightElement, Link, Spinner, Text } from '@chakra-ui/react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
-import { useNavigate } from '@reach/router'
 
 const Signup = (props: any) => {
     const auth = useAuth()
+    const database = useDatabase()
     const navigate = useNavigate()
+
     const [username, setUsername] = React.useState('')
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
@@ -25,19 +26,25 @@ const Signup = (props: any) => {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault()
-        setIsLoading(true);
+        setIsLoading(true)
         try {
             await auth.createUserWithEmailAndPassword(email, password)
-                .then((res) => {
+                .then(async (res) => {
+                    await database.ref(res.user?.uid).set({
+                        settings: {
+                            currency: ["EUR", "€"],
+                            dateFormat: "dd/MM/yyyy"
+                        }
+                    })
                     res.user?.updateProfile({
                         displayName: username
                     })
-                    setIsLoading(false);
+                    setIsLoading(false)
                     navigate('/dashboard')
                 })
         } catch (error) {
-            setError('Invalid username or password');
-            setIsLoading(false);
+            setError('Invalid username or password')
+            setIsLoading(false)
         }
     }
 

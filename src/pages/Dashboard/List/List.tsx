@@ -18,13 +18,14 @@ import CurrencyFormatter from '../../../utils/CurrencyFormatter'
 import getPaymentsAndSubscriptionsData from '../../../utils/getPaymentsAndSubscriptionsData'
 import { format } from 'date-fns'
 import EditDataModal from '../../../components/Dashboard/EditDataModal/EditDataModal'
+import { FinancialData } from '../../../types'
 
 
 
-const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+const months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-const List = (props: any) => {
-    const [allData, setAllData] = React.useState<any>()
+const List = React.memo((props: any) => {
+    const [allData, setAllData] = React.useState<FinancialData[]>()
 
     const [paymentsData, setPaymentsData] = React.useState<any>(null)
     const [subscriptionsData, setSubscriptionsData] = React.useState<any>(null)
@@ -101,29 +102,30 @@ const List = (props: any) => {
     const updateData = () => {
         const paymentsData: any = []
         const subscriptionsData: any = []
-        allData.map((row: any) => {
-            if (row.type === 'subscriptions') {
-                if (row.year === selectedYear) {
-                    subscriptionsData.push(row)
+        if (allData)
+            allData.map((row: FinancialData) => {
+                if (row.type === 'subscriptions') {
+                    if (row.year === selectedYear) {
+                        subscriptionsData.push(row)
+                    }
                 }
-            }
-            if (row.type === 'payments') {
-                let date = row.date.split('-')
-                date = `${date[1]}/${date[0]}`
-                const checkDate = `${checkNumber(Number(selectedMonth) + 1)}/${selectedYear}`
-                if (checkDate === date) {
-                    if (row.type === 'payments') paymentsData.push(row)
-                    else subscriptionsData.push(row)
+                if (row.type === 'payments') {
+                    let date: string[] | string = row.date.split('-')
+                    date = `${date[1]}/${date[0]}`
+                    const checkDate: string = `${checkNumber(Number(selectedMonth) + 1)}/${selectedYear}`
+                    if (checkDate === date) {
+                        if (row.type === 'payments') paymentsData.push(row)
+                        else subscriptionsData.push(row)
+                    }
                 }
-            }
-        })
+            })
 
-        paymentsData.sort((a: any, b: any) => {
+        paymentsData.sort((a: FinancialData, b: FinancialData) => {
             const aDate: any = new Date(a.date)
             const bDate: any = new Date(b.date)
             return aDate - bDate
         })
-        subscriptionsData.sort((a: any, b: any) => {
+        subscriptionsData.sort((a: FinancialData, b: FinancialData) => {
             const aDate: any = new Date(a.date)
             const bDate: any = new Date(b.date)
             return aDate - bDate
@@ -160,7 +162,7 @@ const List = (props: any) => {
             </Tabs>
         </>
     )
-}
+})
 
 export default List
 
