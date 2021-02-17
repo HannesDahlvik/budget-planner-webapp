@@ -13,12 +13,12 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 // Chart
 import Chart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
-import checkNumber from '../../../utils/checkNumber'
 
 // Utils
 import ErrorHandler from '../../../utils/ErrorHandler'
 import CurrencyFormatter from '../../../utils/CurrencyFormatter'
 import DataModal from '../../../components/Dashboard/DataModal/DataModal'
+import checkNumber from '../../../utils/checkNumber'
 import Loader from '../../../components/Loader/Loader'
 import store from '../../../redux/store'
 import getPaymentsAndSubscriptionsData from '../../../utils/getPaymentsAndSubscriptionsData'
@@ -198,7 +198,7 @@ const Frontpage = React.memo((props: any) => {
     if (readyToRender) {
         return (
             <div className="dashboard-frontpage">
-                <Grid templateColumns="1fr" p={4} gap={5}>
+                <Grid templateColumns="1fr" p={6} gap={5}>
                     <Box borderWidth="1px" rounded="lg" overflow="hidden">
                         <Box>
                             <div className="month-changer px4 py2">

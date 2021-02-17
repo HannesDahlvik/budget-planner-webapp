@@ -1,19 +1,22 @@
 import React from 'react'
 
+// Types
+import { FinancialData } from '../../../types';
+
+// Router
+import { Link } from '@reach/router';
+
 // Firebase
-import { useAuth, useDatabase, useFirestore, useStorage } from 'reactfire'
-import firebase from 'firebase'
+import { useAuth, useDatabase } from 'reactfire'
 
 // CSS
 import 'react-image-crop/dist/ReactCrop.css';
 import './Profile.scss'
-import { useNavigate } from '@reach/router';
-
 
 import Chart from 'react-apexcharts'
 
 // Chakra UI
-import { Box, Button, FormControl, FormLabel, Grid, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Skeleton, Spinner, Text, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, FormControl, FormLabel, Grid, Image, Input, Select, Skeleton, Text } from '@chakra-ui/react'
 import { MdClose, MdEdit } from 'react-icons/md'
 
 // Components
@@ -25,145 +28,15 @@ import getPaymentsAndSubscriptionsData from '../../../utils/getPaymentsAndSubscr
 import store from '../../../redux/store';
 import ErrorHandler from '../../../utils/ErrorHandler'
 import { ApexOptions } from 'apexcharts';
+import Loader from '../../../components/Loader/Loader';
+import currencies from './currencies.json'
 
 const Profile = (props: any) => {
     const auth = useAuth()
     const database = useDatabase()
 
-    const [currencies, setCurrencies] = React.useState<any>([
-        {
-            value: 'EUR',
-            label: '€',
-        },
-        {
-            value: 'CAD',
-            label: '$'
-        },
-        {
-            value: 'HKD',
-            label: '$'
-        },
-        {
-            value: 'ISK',
-            label: 'kr'
-        },
-        {
-            value: 'PHP',
-            label: '₱'
-        },
-        {
-            value: 'DKK',
-            label: 'Kr.'
-        },
-        {
-            value: 'HUF',
-            label: 'Ft'
-        },
-        {
-            value: 'CZK',
-            label: 'Kč'
-        },
-        {
-            value: 'AUD',
-            label: 'A$'
-        },
-        {
-            value: 'RON',
-            label: 'lei'
-        },
-        {
-            value: 'SEK',
-            label: 'kr'
-        },
-        {
-            value: 'IDR',
-            label: 'Rp'
-        },
-        {
-            value: 'INR',
-            label: '₹'
-        },
-        {
-            value: 'BRL',
-            label: 'R$'
-        },
-        {
-            value: 'RUB',
-            label: '₽'
-        },
-        {
-            value: 'HRK',
-            label: 'kn'
-        },
-        {
-            value: 'JPY',
-            label: '¥',
-        },
-        {
-            value: 'THB',
-            label: '฿'
-        },
-        {
-            value: 'CHF',
-            label: 'CHf'
-        },
-        {
-            value: 'SGD',
-            label: 'S$'
-        },
-        {
-            value: 'PLN',
-            label: 'zł'
-        },
-        {
-            value: 'BGN',
-            label: 'Лв'
-        },
-        {
-            value: 'TRY',
-            label: '₺'
-        },
-        {
-            value: 'CNY',
-            label: '¥'
-        },
-        {
-            value: 'NOK',
-            label: 'kr'
-        },
-        {
-            value: 'NZD',
-            label: '$'
-        },
-        {
-            value: 'ZAR',
-            label: 'R'
-        },
-        {
-            value: 'USD',
-            label: '$',
-        },
-        {
-            value: 'MXN',
-            label: '$'
-        },
-        {
-            value: 'ILS',
-            label: '₪'
-        },
-        {
-            value: 'GBP',
-            label: '£'
-        },
-        {
-            value: 'KRW',
-            label: '₩'
-        },
-        {
-            value: 'MYR',
-            label: 'RM'
-        }
-    ])
+    const [readyToRender, setReadyToRender] = React.useState(false)
+
     const [currency, setCurrency] = React.useState<any>(['EUR', '€'])
     const [dateFormat, setDateFormat] = React.useState<any>('dd/MM/yyyy')
     const [dateFormats, setDateFormats] = React.useState<any>(["dd/MM/yyyy", "MM/dd/yyyy"])
@@ -172,13 +45,11 @@ const Profile = (props: any) => {
     const [showChangeAvatarModal, setShowChangeAvatarModal] = React.useState(false)
     const [username, setUsername] = React.useState<any>('')
 
-    const [deletingUser, setDeletingUser] = React.useState(false)
-
     const [displayName, setDisplayName] = React.useState<any>(auth.currentUser?.displayName)
     const [avatarUrl, setAvatarUrl] = React.useState<any>()
 
     const [chartOptions, setChartOptions] = React.useState<ApexOptions>()
-    const [chartSeries, setChartSeries] = React.useState<ApexAxisChartSeries>()
+    const [chartSeries, setChartSeries] = React.useState<ApexAxisChartSeries>([])
 
     const [renderChart, setRenderChart] = React.useState(false)
 
@@ -197,10 +68,10 @@ const Profile = (props: any) => {
     const initChart = () => {
         getPaymentsAndSubscriptionsData()
             .then((data: any) => {
-                let tempData: any = []
-                const labels: any = []
-                const series: any = []
-                data.map((row: any, i: number) => {
+                let tempData: any[] = []
+                const labels: any[] = []
+                const series: any[] = []
+                data.map((row: FinancialData, i: number) => {
                     if (row.type === 'payments') {
                         if (!tempData[i % tempData.length]) {
                             tempData.push({
@@ -213,6 +84,12 @@ const Profile = (props: any) => {
                                 amount: row.amount
                             }
                         }
+                    } else {
+                        if (row.recurrences)
+                            tempData.push({
+                                title: row.title,
+                                amount: row.amount * row.recurrences
+                            })
                     }
                 })
 
@@ -224,19 +101,19 @@ const Profile = (props: any) => {
                     }))
                 }
 
-                let epicData: any = groupAndMap(tempData, 'title', 'amount')
-                epicData.map((row: any) => {
+                let finalData: any = groupAndMap(tempData, 'title', 'amount')
+                finalData.map((row: any) => {
                     let rowAmount = 0
                     row.amount.map((amount: any) => rowAmount += amount.amount)
                     row.amount = Number(rowAmount.toFixed(2))
                 })
-                epicData = epicData.sort((a: any, b: any) => (a.amount > b.amount) ? 1 : ((b.amount > a.amount) ? -1 : 0)).slice(0, 5)
+                finalData.sort((a: any, b: any) => (a.amount > b.amount) ? 1 : ((b.amount > a.amount) ? -1 : 0)).slice(0, 5)
                     .map((row: any) => {
                         labels.push(row.title)
                         series.push(Math.abs(row.amount))
                     })
 
-                const theme = localStorage.getItem('theme')
+                const theme = localStorage.getItem('chakra-ui-color-mode')
 
                 setChartOptions({
                     chart: {
@@ -256,8 +133,11 @@ const Profile = (props: any) => {
                     }
                 })
 
-                setChartSeries(series)
-                setRenderChart(true)
+                if (series.length > 0) {
+                    setChartSeries(series)
+                    setRenderChart(true)
+                }
+                setReadyToRender(true)
             })
             .catch((err: Error) => new ErrorHandler(err.message))
     }
@@ -304,218 +184,106 @@ const Profile = (props: any) => {
                 <PFPChanger isOpen={showChangeAvatarModal} />
             ) : <></>}
 
-            {deletingUser ? (
-                <DeletingUserModal isOpen={deletingUser} />
-            ) : <></>}
-
-            <div className="dashboard-profile h-100">
-                <Grid templateColumns="1fr" p={6} className="h-100 dashboard-column">
-                    <Box borderWidth="1px" rounded="lg" overflow="hidden" className="w-100">
-                        <div className="avatar-wrapper w-100">
-                            <Image
-                                src={avatarUrl ? avatarUrl : 'http://via.placeholder.com/300'}
-                                borderRadius="50%"
-                                w="100%"
-                                onMouseEnter={() => setShowAvatarEditButton(true)}
-                                onMouseLeave={() => setShowAvatarEditButton(false)}
-                                alt="Avatar"
-                            />
-                            {showAvatarEditButton ? (
-                                <div
-                                    onClick={() => setShowChangeAvatarModal(true)}
+            {readyToRender ? (
+                <div className="dashboard-profile h-100">
+                    <Grid templateColumns="1fr" p={6} className="h-100 dashboard-column">
+                        <Box borderWidth="1px" rounded="lg" overflow="hidden" className="w-100">
+                            <div className="avatar-wrapper w-100">
+                                <Image
+                                    src={avatarUrl ? avatarUrl : 'http://via.placeholder.com/300'}
+                                    borderRadius="50%"
+                                    w="100%"
                                     onMouseEnter={() => setShowAvatarEditButton(true)}
                                     onMouseLeave={() => setShowAvatarEditButton(false)}
-                                    className="avatar-edit-button"
-                                >
-                                    <Box as={MdEdit} size="48px"></Box>
-                                </div>
-                            ) : (
-                                    <></>
-                                )}
-                        </div>
-
-                        <div className="h-100 changer-wrapper">
-                            {showChangeUsername ? (
-                                <>
-                                    <form onSubmit={(e: any) => changeDisplayName(e)}>
-                                        <Box display="flex" justifyContent="center" alignItems="center">
-                                            <Button variant="solid" colorScheme="red" onClick={() => setShowChangeUsername(false)}><Box as={MdClose} fontSize="32px"></Box></Button>
-                                            <Input defaultValue={displayName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} className="mx1" />
-                                            <Button variant="solid" colorScheme="blue" onClick={(e: any) => changeDisplayName(e)}><Box as={MdEdit} fontSize="32px"></Box></Button>
-                                        </Box>
-                                    </form>
-                                </>
-                            ) : (
-                                    <Box display="flex" justifyContent="center" alignItems="center">
-                                        <Text fontSize="24px">{displayName}</Text>
-                                        <Box onClick={() => setShowChangeUsername(true)} as={MdEdit} className="ml1" fontSize="24px" cursor="pointer"></Box>
-                                    </Box>
-                                )}
-                        </div>
-                    </Box>
-                </Grid>
-                <Grid templateColumns="1fr" templateRows="1fr 1fr" p={6} gap={5} className="h-100 dashboard-column">
-                    <Box borderWidth="1px" rounded="lg" overflow="hidden" className="w-100">
-                        <Box p={4} className="h-100" display="flex" flexDirection="column" justifyContent="space-between">
-                            <Box>
-                                <FormControl className="my2">
-                                    {currency ? (
-                                        <>
-                                            <FormLabel htmlFor="currency">Currency</FormLabel>
-                                            <Select id="currency" value={`${currency[0]}-${currency[1]}`} onChange={(e) => submitSettingsChange(e, 'currency')}>
-                                                {currencies.map((row: any, i: number) => (<option key={i} value={`${row.value}-${row.label}`}>{row.value}, {row.label}</option>))}
-                                            </Select>
-                                        </>
-                                    ) : (<></>)}
-                                </FormControl>
-
-                                <FormControl className="my2">
-                                    {dateFormat ? (
-                                        <>
-                                            <FormLabel htmlFor="date-format">Date format</FormLabel>
-                                            <Select id="date-format" value={dateFormat} onChange={(e) => submitSettingsChange(e, 'date')}>
-                                                {dateFormats.map((row: any, i: number) => (<option key={i}>{row}</option>))}
-                                            </Select>
-                                        </>
-                                    ) : (<></>)}
-                                </FormControl>
-                            </Box>
-                            <Button
-                                width="100%"
-                                colorScheme="blue"
-                                style={{ marginTop: 'auto' }}
-                                onClick={() => {
-                                    if (deletingUser === true) setDeletingUser(false)
-                                    else setDeletingUser(true)
-                                }}
-                            >
-                                Delete user
-                                </Button>
-                        </Box>
-                    </Box>
-                    <Box borderWidth="1px" rounded="lg" overflow="hidden" className="w-100" display="flex" justifyContent="center" alignItems="center">
-                        <Box p={4}>
-                            {renderChart ? (
-                                <Chart
-                                    height="350px"
-                                    options={chartOptions}
-                                    series={chartSeries}
-                                    type="pie"
+                                    alt="Avatar"
                                 />
-                            ) : (<Skeleton height="350px" />)}
+                                {showAvatarEditButton ? (
+                                    <div
+                                        onClick={() => setShowChangeAvatarModal(true)}
+                                        onMouseEnter={() => setShowAvatarEditButton(true)}
+                                        onMouseLeave={() => setShowAvatarEditButton(false)}
+                                        className="avatar-edit-button"
+                                    >
+                                        <Box as={MdEdit} size="48px"></Box>
+                                    </div>
+                                ) : (
+                                        <></>
+                                    )}
+                            </div>
+
+                            <div className="h-100 changer-wrapper">
+                                {showChangeUsername ? (
+                                    <>
+                                        <form onSubmit={(e: any) => changeDisplayName(e)}>
+                                            <Box display="flex" justifyContent="center" alignItems="center">
+                                                <Button variant="solid" colorScheme="red" onClick={() => setShowChangeUsername(false)}><Box as={MdClose} fontSize="32px"></Box></Button>
+                                                <Input w={'250px'} defaultValue={displayName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} className="mx1" />
+                                                <Button variant="solid" colorScheme="blue" onClick={(e: any) => changeDisplayName(e)}><Box as={MdEdit} fontSize="32px"></Box></Button>
+                                            </Box>
+                                        </form>
+                                    </>
+                                ) : (
+                                        <Box display="flex" justifyContent="center" alignItems="center">
+                                            <Text fontSize="24px">{displayName}</Text>
+                                            <Box onClick={() => setShowChangeUsername(true)} as={MdEdit} className="ml1" fontSize="24px" cursor="pointer"></Box>
+                                        </Box>
+                                    )}
+                            </div>
                         </Box>
-                    </Box>
-                </Grid>
-            </div>
+                    </Grid>
+                    <Grid templateColumns="1fr" templateRows="1fr 1fr" p={6} gap={5} className="h-100 dashboard-column">
+                        <Box borderWidth="1px" rounded="lg" overflow="hidden" className="w-100">
+                            <Box p={4} className="h-100" display="flex" flexDirection="column" justifyContent="space-between">
+                                <Box>
+                                    <FormControl className="my2">
+                                        {currency ? (
+                                            <>
+                                                <FormLabel htmlFor="currency">Currency</FormLabel>
+                                                <Select id="currency" value={`${currency[0]}-${currency[1]}`} onChange={(e) => submitSettingsChange(e, 'currency')}>
+                                                    {currencies.map((row: any, i: number) => (<option key={i} value={`${row.value}-${row.label}`}>{row.value}, {row.label}</option>))}
+                                                </Select>
+                                            </>
+                                        ) : (<></>)}
+                                    </FormControl>
+
+                                    <FormControl className="my2">
+                                        {dateFormat ? (
+                                            <>
+                                                <FormLabel htmlFor="date-format">Date format</FormLabel>
+                                                <Select id="date-format" value={dateFormat} onChange={(e) => submitSettingsChange(e, 'date')}>
+                                                    {dateFormats.map((row: any, i: number) => (<option key={i}>{row}</option>))}
+                                                </Select>
+                                            </>
+                                        ) : (<></>)}
+                                    </FormControl>
+                                </Box>
+                            </Box>
+                        </Box>
+                        <Box borderWidth="1px" rounded="lg" overflow="hidden" className="w-100" display="flex" justifyContent="center" alignItems="center">
+                            <Box p={4} width="100%">
+                                {renderChart
+                                    ? <Chart height="350px" options={chartOptions} series={chartSeries} type="pie" />
+                                    : chartSeries.length === 0 ? (
+                                        <Box align="center">
+                                            <Text>Go to frontpage and add some data!</Text>
+                                            <Link to="/dashboard/frontpage">
+                                                <Button mt={3}>Frontpage</Button>
+                                            </Link>
+                                        </Box>
+                                    )
+                                        : (
+                                            <Skeleton height="350px" />
+                                        )
+                                }
+                            </Box>
+                        </Box>
+                    </Grid>
+                </div>
+            ) : (
+                    <Loader />
+                )}
         </>
     )
 }
 
 export default Profile
-
-const DeletingUserModal = React.memo((props: any) => {
-    const auth = useAuth()
-    const firestore = useFirestore()
-    const database = useDatabase()
-    const navigate = useNavigate()
-
-    const [password, setPassword] = React.useState('')
-
-    const [showInsertPassword, setShowInsertPassword] = React.useState(false)
-
-    const [deletingUser, setDeletingUser] = React.useState(false)
-    const [showSureButton1, setShowSureButton1] = React.useState(true)
-    const [showSureButton2, setShowSureButton2] = React.useState(false)
-    const [showSureButton3, setShowSureButton3] = React.useState(false)
-    const [showSureButton4, setShowSureButton4] = React.useState(false)
-
-    React.useEffect(() => {
-        setDeletingUser(props.isOpen)
-    }, [props.isOpen])
-
-    const deleteUser = () => {
-        if (auth.currentUser) {
-            auth.currentUser.delete()
-                .then(() => {
-                    firestore.collection('financial_data').doc(auth.currentUser?.uid).delete()
-                        .catch((err: Error) => new ErrorHandler(err.message))
-                    database.ref(auth.currentUser?.uid).remove()
-                        .then(() => {
-                            navigate('/')
-                        })
-                        .catch((err: Error) => new ErrorHandler(err.message))
-                })
-                .catch((err: Error) => {
-                    new ErrorHandler(err.message)
-                    setShowSureButton4(true)
-                    setShowInsertPassword(true)
-                })
-        }
-    }
-
-    const actuallyDeleteUser = () => {
-        const email: any = auth.currentUser?.email
-        const credential = firebase.auth.EmailAuthProvider.credential(email, password)
-        auth.currentUser?.reauthenticateWithCredential(credential)
-            .then(() => {
-                firestore.collection('financial_data').doc(auth.currentUser?.uid).delete()
-                    .catch((err: Error) => new ErrorHandler(err.message))
-                database.ref(auth.currentUser?.uid).remove()
-                    .then(() => {
-                        navigate('/')
-                    })
-                    .catch((err: Error) => new ErrorHandler(err.message))
-            })
-            .catch((err: Error) => new ErrorHandler(err.message))
-    }
-
-    return (
-        <Modal
-            isOpen={deletingUser}
-            onClose={() => setDeletingUser(false)}
-            isCentered
-        >
-            <ModalOverlay />
-            <ModalContent textAlign="center">
-                <ModalHeader>Delete user?</ModalHeader>
-                <ModalCloseButton onClick={() => setDeletingUser(false)} />
-                <ModalBody p={10}>
-                    {showInsertPassword ? (
-                        <>
-                            <Input
-                                placeholder="Insert current user password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                mb={6}
-                            />
-                        </>
-                    ) : <></>}
-
-                    <Button mr={3} onClick={() => setDeletingUser(false)}>Cancel</Button>
-                    {showSureButton1
-                        ? <Button onClick={() => {
-                            setShowSureButton1(false)
-                            setShowSureButton2(true)
-                        }} colorScheme="red">Are you sure?</Button>
-                        : <></>
-                    }
-                    {showSureButton2
-                        ? <Button onClick={() => {
-                            setShowSureButton2(false)
-                            setShowSureButton3(true)
-                        }} colorScheme="red">Are you like sure sure?</Button>
-                        : <></>
-                    }
-                    {showSureButton3
-                        ? <Button onClick={() => deleteUser()} colorScheme="red">Alight click me then.</Button>
-                        : <></>
-                    }
-                    {showSureButton4
-                        ? <Button onClick={() => actuallyDeleteUser()}>CLICK MEEE!!!</Button>
-                        : <></>
-                    }
-                </ModalBody>
-            </ModalContent>
-        </Modal>
-    )
-})

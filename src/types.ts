@@ -3,7 +3,7 @@ export type FinancialData = {
     date: string
     id: string
     title: string
-    type: string
+    type: 'payments' | 'subscriptions'
     year?: number
     recurrences?: number
 }

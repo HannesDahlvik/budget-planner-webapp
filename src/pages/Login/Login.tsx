@@ -14,15 +14,17 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 const Login = (props: any) => {
     const auth = useAuth()
     const navigate = useNavigate()
+
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
     const [error, setError] = React.useState('')
+
     const [isLoading, setIsLoading] = React.useState(false)
     const [showPassword, setShowPassword] = React.useState(false)
 
     const handlePasswordVisibility = () => setShowPassword(!showPassword)
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault()
         setIsLoading(true);
         try {
@@ -68,7 +70,7 @@ const Login = (props: any) => {
                                 <Heading>Login</Heading>
                             </Box>
                             <Box my={4} textAlign="left">
-                                <form onSubmit={(e: any) => handleSubmit(e)}>
+                                <form onSubmit={(e) => handleSubmit(e)}>
                                     {error && <ErrorMessage message={error} />}
                                     <FormControl isRequired>
                                         <FormLabel>Email</FormLabel>
@@ -77,6 +79,7 @@ const Login = (props: any) => {
                                             type="email"
                                             placeholder="test@test.com"
                                             size="lg"
+                                            autoComplete="on"
                                             onChange={(event) => setEmail(event.currentTarget.value)}
                                         />
                                     </FormControl>
@@ -88,6 +91,7 @@ const Login = (props: any) => {
                                                 type={showPassword ? 'text' : 'password'}
                                                 placeholder="*******"
                                                 size="lg"
+                                                autoComplete="on"
                                                 onChange={event => setPassword(event.currentTarget.value)}
                                             />
                                             <InputRightElement width="3rem">

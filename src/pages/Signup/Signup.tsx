@@ -88,6 +88,7 @@ const Signup = (props: any) => {
                                             type="text"
                                             placeholder="John Doe"
                                             size="lg"
+                                            autoComplete="on"
                                             onChange={(event) => setUsername(event.currentTarget.value)}
                                         />
                                     </FormControl>
@@ -98,6 +99,7 @@ const Signup = (props: any) => {
                                             type="email"
                                             placeholder="test@test.com"
                                             size="lg"
+                                            autoComplete="on"
                                             onChange={(event) => setEmail(event.currentTarget.value)}
                                         />
                                     </FormControl>

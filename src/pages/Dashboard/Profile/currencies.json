@@ -1,0 +1,133 @@
+[{
+        "value": "EUR",
+        "label": "€"
+    },
+    {
+        "value": "CAD",
+        "label": "$"
+    },
+    {
+        "value": "HKD",
+        "label": "$"
+    },
+    {
+        "value": "ISK",
+        "label": "kr"
+    },
+    {
+        "value": "PHP",
+        "label": "₱"
+    },
+    {
+        "value": "DKK",
+        "label": "Kr."
+    },
+    {
+        "value": "HUF",
+        "label": "Ft"
+    },
+    {
+        "value": "CZK",
+        "label": "Kč"
+    },
+    {
+        "value": "AUD",
+        "label": "A$"
+    },
+    {
+        "value": "RON",
+        "label": "lei"
+    },
+    {
+        "value": "SEK",
+        "label": "kr"
+    },
+    {
+        "value": "IDR",
+        "label": "Rp"
+    },
+    {
+        "value": "INR",
+        "label": "₹"
+    },
+    {
+        "value": "BRL",
+        "label": "R$"
+    },
+    {
+        "value": "RUB",
+        "label": "₽"
+    },
+    {
+        "value": "HRK",
+        "label": "kn"
+    },
+    {
+        "value": "JPY",
+        "label": "¥"
+    },
+    {
+        "value": "THB",
+        "label": "฿"
+    },
+    {
+        "value": "CHF",
+        "label": "CHf"
+    },
+    {
+        "value": "SGD",
+        "label": "S$"
+    },
+    {
+        "value": "PLN",
+        "label": "zł"
+    },
+    {
+        "value": "BGN",
+        "label": "Лв"
+    },
+    {
+        "value": "TRY",
+        "label": "₺"
+    },
+    {
+        "value": "CNY",
+        "label": "¥"
+    },
+    {
+        "value": "NOK",
+        "label": "kr"
+    },
+    {
+        "value": "NZD",
+        "label": "$"
+    },
+    {
+        "value": "ZAR",
+        "label": "R"
+    },
+    {
+        "value": "USD",
+        "label": "$"
+    },
+    {
+        "value": "MXN",
+        "label": "$"
+    },
+    {
+        "value": "ILS",
+        "label": "₪"
+    },
+    {
+        "value": "GBP",
+        "label": "£"
+    },
+    {
+        "value": "KRW",
+        "label": "₩"
+    },
+    {
+        "value": "MYR",
+        "label": "RM"
+    }
+]
