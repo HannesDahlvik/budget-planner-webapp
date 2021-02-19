@@ -10,14 +10,10 @@ import NavLink from '../../components/NavLink/NavLink'
 import Loader from '../../components/Loader/Loader'
 
 // Chakra UI
-import { Button, Divider, Grid, Menu, MenuButton, MenuItem, MenuList, Text, useColorMode } from '@chakra-ui/react'
-import { ChevronDownIcon } from '@chakra-ui/icons'
+import { Button, Divider, Grid, Text, useColorMode } from '@chakra-ui/react'
 
 // Utils
 import ErrorHandler from '../../utils/ErrorHandler'
-import * as ROUTES from '../../constants/routes'
-import List from '../../pages/Dashboard/List/List'
-import NoMatch from '../../hoc/NoMatch/NoMatch'
 
 const Dashboard = (props: any) => {
     const database = useDatabase()
@@ -54,7 +50,6 @@ const Dashboard = (props: any) => {
     ]
     const [settings, setSettings] = React.useState()
     const [readyToRender, setReadyToRender] = React.useState(false)
-    const [displayName, setDisplayName] = React.useState<string | null | undefined>('')
 
     React.useEffect(() => {
         database.ref(`${auth.currentUser?.uid}/settings`)
@@ -67,7 +62,7 @@ const Dashboard = (props: any) => {
             localStorage.setItem('exchangerates', JSON.stringify(data.rates))
             setReadyToRender(true)
         }))
-    }, [])
+    }, [auth.currentUser?.uid, database])
 
     if (readyToRender) {
         return (
@@ -75,24 +70,6 @@ const Dashboard = (props: any) => {
                 <Grid className="dashboard-wrapper">
                     <div className="sidebar">
                         <div className="sidebar-top">
-                            {/* <Menu>
-                                    <MenuButton
-                                        as={Button}
-                                        fontSize="xl"
-                                        fontWeight="700"
-                                        display="flex"
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        rightIcon={<ChevronDownIcon />}
-                                    >
-                                        {auth.currentUser?.displayName}
-                                    </MenuButton>
-                                    <MenuList>
-                                        <MenuItem as="a" href={ROUTES.PUBLIC}>Home</MenuItem>
-                                        <MenuItem as="a" href={`${ROUTES.DASHBOARD}/profile`}>Profile</MenuItem>
-                                        <MenuItem as="button" onClick={() => auth.signOut()}>Log out</MenuItem>
-                                    </MenuList>
-                                </Menu> */}
                             <Text
                                 fontSize="24px"
                                 fontWeight="700"

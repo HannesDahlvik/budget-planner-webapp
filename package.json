@@ -46,7 +46,7 @@
         "node-sass": "^4.14.1",
         "typescript": "~3.8.2"
     },
-    "homepage": "http://139.59.131.160/",
+    "homepage": "http://budgety.ml",
     "eslintConfig": {
         "extends": "react-app"
     },

@@ -58,7 +58,7 @@ const Navbar = (props: Props) => {
                 <Flex align="center" mr={5} flexGrow={1}>
                     <Heading as="h1" size="lg" letterSpacing={"-.1rem"}>
                         <Link to="/">
-                            Budget planner
+                            Budgety
                         </Link>
                     </Heading>
                 </Flex>

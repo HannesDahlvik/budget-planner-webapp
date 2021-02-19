@@ -1,6 +1,6 @@
 .home {
     position: relative;
-    height: 75vh;
+    height: 100vh;
 }
 
 .section {
@@ -14,12 +14,12 @@
     flex-direction: column;
     position: absolute;
     z-index: 1;
-    margin-top: 200px;
+    margin-top: 225px;
     width: 100%;
     text-align: center;
 
     .home-header-buttons {
-        margin-top: 25px;
+        margin-top: 50px;
 
         * {
             margin: auto 5px;

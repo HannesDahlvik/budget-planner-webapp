@@ -25,7 +25,7 @@ import Donate from './pages/Donate/Donate';
 
 // Dashboard Pages
 import Frontpage from './pages/Dashboard/Frontpage/Frontpage';
-import Calendar from './pages/Dashboard/Calendar/Calendar'
+import CalendarPage from './pages/Dashboard/Calendar/Calendar';
 import List from './pages/Dashboard/List/List';
 import Profile from './pages/Dashboard/Profile/Profile';
 
@@ -35,35 +35,33 @@ import ForgotPassword from './components/Public/ForgotPassword/ForgotPassword';
 
 const App = () => {
     const auth = useAuth()
-    const [user, setUser]: any = React.useState<any>(null)
     const [readyToRender, setReadyToRender] = React.useState(false)
 
     useAnalytics()
     React.useEffect(() => {
-        auth.onAuthStateChanged((state) => {
-            if (state) setUser(state)
-            else setUser(null)
-            setReadyToRender(true)
-        })
-    }, [])
+        auth.onAuthStateChanged(() => setReadyToRender(true))
+    }, [auth])
 
     if (readyToRender) {
         return (
             <Router>
                 <NoMatch default isDashboard={false} />
+
                 <Login path={ROUTES.LOG_IN} />
                 <Signup path={ROUTES.SIGN_UP} />
                 <ForgotPassword path={ROUTES.PASSWORD_FORGET} />
+
                 <Public path={ROUTES.PUBLIC}>
                     <NoMatch default isDashboard={false} />
-                    <Home path="/" />
-                    <Donate path="/donate" />
+                    <Home path={ROUTES.PUBLIC} />
+                    <Donate path={ROUTES.DONATE} />
                 </Public>
+
                 <Redirect from="/dashboard" to="/dashboard/frontpage" noThrow />
                 <PrivateRoute as={Dashboard} path="/dashboard">
                     <NoMatch default isDashboard={true} />
                     <Frontpage path="frontpage" />
-                    <Calendar path="calendar" />
+                    <CalendarPage path="calendar" />
                     <List path="list" />
                     <Profile path="profile" />
                 </PrivateRoute>

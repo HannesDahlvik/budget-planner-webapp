@@ -1,23 +1,19 @@
 import React from 'react'
 import './Public.scss'
 
-// Router
-import * as ROUTES from '../../constants/routes';
-
 // Components
 import Navbar from '../../components/Public/Navbar/Navbar';
 import Footer from '../../components/Public/Footer/Footer';
-
-// Pages
-import Home from '../../pages/Home/Home';
-import Donate from '../../pages/Donate/Donate';
+import { useLocation } from '@reach/router';
 
 const Public = (props: any) => {
+    const location = useLocation()
+
     return (
         <div className="root">
             <Navbar isSmall={true} />
 
-            <div className="public-page wrapper">
+            <div className={`public-page ${location.pathname !== '/' ? 'wrapper' : ''}`}>
                 {props.children}
             </div>
 
