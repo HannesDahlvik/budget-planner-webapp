@@ -14,3 +14,11 @@ export type CalendarData = {
     start: Date
     title: string
 }
+
+export type SidebarLinks = {
+    title?: string
+    url?: string
+    active?: boolean
+    divider?: boolean
+    icon?: any
+}
