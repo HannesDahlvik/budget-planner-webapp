@@ -11,7 +11,7 @@ import { Avatar, Divider, Flex, Text } from '@chakra-ui/react'
 import NavLink from '../../NavLink/NavLink'
 import { MdDashboard } from 'react-icons/md'
 import { CalendarIcon } from '@chakra-ui/icons'
-import { FaCalculator, FaThList, FaUser } from 'react-icons/fa'
+import { FaCalculator, FaThList } from 'react-icons/fa'
 import { IoLogOut } from 'react-icons/io5'
 
 const Sidebar = () => {
@@ -92,10 +92,10 @@ const Sidebar = () => {
                                     to={row.url}
                                     key={i}
                                 >
-                                    <p className="sidebar-navlink">
+                                    <Text className="sidebar-navlink">
                                         {row.icon}
-                                        <Text>{row.title}</Text>
-                                    </p>
+                                        {row.title}
+                                    </Text>
                                 </NavLink>
                             )
                         }
@@ -104,10 +104,10 @@ const Sidebar = () => {
                         to="/"
                         onClick={() => auth.signOut()}
                     >
-                        <p className="sidebar-navlink">
+                        <Text className="sidebar-navlink">
                             <IoLogOut style={{ fontSize: '28px' }} />
-                            <Text>Logout</Text>
-                        </p>
+                            Logout
+                        </Text>
                     </NavLink>
                 </div>
             </div>

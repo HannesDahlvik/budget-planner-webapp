@@ -1,6 +1,7 @@
 import React from 'react'
 import { useAuth, useFirestore } from 'reactfire'
 import store from '../../../redux/store'
+import { FinancialData } from '../../../types'
 
 // Components
 import Loader from '../../../components/Loader/Loader'
@@ -18,17 +19,14 @@ import CurrencyFormatter from '../../../utils/CurrencyFormatter'
 import getPaymentsAndSubscriptionsData from '../../../utils/getPaymentsAndSubscriptionsData'
 import { format } from 'date-fns'
 import EditDataModal from '../../../components/Dashboard/EditDataModal/EditDataModal'
-import { FinancialData } from '../../../types'
-
-
 
 const months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 const List = React.memo((props: any) => {
     const [allData, setAllData] = React.useState<FinancialData[]>()
 
-    const [paymentsData, setPaymentsData] = React.useState<any>(null)
-    const [subscriptionsData, setSubscriptionsData] = React.useState<any>(null)
+    const [paymentsData, setPaymentsData] = React.useState<FinancialData[]>([])
+    const [subscriptionsData, setSubscriptionsData] = React.useState<FinancialData[]>([])
 
     const [selectedMonth, setSelectedMonth] = React.useState<any>()
     const [selectedYear, setSelectedYear] = React.useState<any>()
@@ -166,7 +164,11 @@ const List = React.memo((props: any) => {
 
 export default List
 
-const PaymentsList = (props: any) => {
+interface ListProps {
+    data: FinancialData[]
+}
+
+const PaymentsList = (props: ListProps) => {
     const auth = useAuth()
     const firestore = useFirestore()
 
@@ -245,11 +247,11 @@ const PaymentsList = (props: any) => {
             )
         }
     } else {
-        return <Loader />
+        return <Loader isListLoader={true} />
     }
 }
 
-const SubscriptionsList = (props: any) => {
+const SubscriptionsList = (props: ListProps) => {
     const auth = useAuth()
     const firestore = useFirestore()
 
@@ -330,6 +332,6 @@ const SubscriptionsList = (props: any) => {
             )
         }
     } else {
-        return <Loader />
+        return <Loader isListLoader={true} />
     }
 }
